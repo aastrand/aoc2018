@@ -10,12 +10,13 @@ fn solve1(filename: &str) -> i64 {
         .iter()
         .map(|s| s.parse::<i64>().unwrap())
         .sum()
-}    
+}
 
 fn solve2(filename: &str) -> i64 {
     let nums: Vec<i64> = lines_from_file(filename)
         .iter()
-        .map(|s| s.parse::<i64>().unwrap()).collect();
+        .map(|s| s.parse::<i64>().unwrap())
+        .collect();
 
     let mut seen = HashSet::<i64>::new();
     let mut sum: i64 = 0;
@@ -25,7 +26,7 @@ fn solve2(filename: &str) -> i64 {
         for num in &nums {
             seen.insert(sum);
             sum += num;
-        
+
             if seen.contains(&sum) {
                 found = true;
                 break;
