@@ -3,6 +3,7 @@ import { readFileSync } from "fs";
 
 const solve1 = function (file: string): number {
   const nums: number[] = readFileSync(file, "utf-8")
+    .trim()
     .split("\n")
     .map((num) => +num);
   return nums.reduce((a, b) => a + b, 0);
@@ -10,6 +11,7 @@ const solve1 = function (file: string): number {
 
 const solve2 = function (file: string): number {
   const nums: number[] = readFileSync(file, "utf-8")
+    .trim()
     .split("\n")
     .map((num) => +num);
 
