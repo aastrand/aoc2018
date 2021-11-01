@@ -36,11 +36,12 @@ const getGuardToMinutes = function (
 ): Map<String, Array<number>> {
   var guardToMinutes: Map<String, Array<number>> = new Map();
   var guard: string | undefined;
-  var asleep: Date | undefined;
+  var asleep: Date | undefined | null;
 
   for (let i = 0; i < logs.length; i++) {
     if (logs[i].log.includes("Guard")) {
       guard = logs[i].log.split(" begins")[0];
+      asleep = null;
     } else if (logs[i].log.includes("asleep")) {
       asleep = logs[i].date;
     } else if (logs[i].log.includes("wakes")) {
@@ -51,9 +52,12 @@ const getGuardToMinutes = function (
       const minutes =
         logs[i].date.getMinutes() - (asleep ? asleep.getMinutes() : 0);
       for (let dm = 0; dm < minutes; dm++) {
-        if (guard === undefined) {
+        if (!guard) {
           throw "wake up without guard " + logs[i].log;
         }
+	if (!asleep) {
+	  throw "wake up without asleep" + logs[i].log;
+	}
 
         var guardMinutes = guardToMinutes.get(guard);
         if (!guardMinutes) {
@@ -64,7 +68,7 @@ const getGuardToMinutes = function (
         guardMinutes.push(asleep.getMinutes() + dm);
       }
 
-      asleep = undefined;
+      asleep = null;
     } else {
       throw "Illegal log line: " + logs[i].log;
     }
