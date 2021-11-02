@@ -1,5 +1,3 @@
-/* eslint-disable no-constant-condition */
-/* eslint-disable guard-for-in */
 import { strict as assert } from 'assert';
 import { readFileSync } from 'fs';
 import LinkedList from 'ts-linked-list';
