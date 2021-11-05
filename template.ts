@@ -20,5 +20,5 @@ const solve2 = (file: string): number => {
 assert(solve1('./example.txt') === 3);
 console.log(solve1('./input.txt'));
 
-// assert(solve2("./example2.txt") === 2);
+// assert(solve2('./example.txt') === 2);
 console.log(solve2('./input.txt'));
