@@ -1,19 +1,18 @@
 import { strict as assert } from "assert";
 import { readFileSync } from "fs";
 
-const parse = function (file: string): string[] {
-  return readFileSync(file, "utf-8").trim().split("\n");
-};
+const parse = (file: string): string[] =>
+  readFileSync(file, "utf-8").trim().split("\n");
 
 interface Box {
   twos: number;
   threes: number;
 }
 
-const parseBox = function (input: string): Box {
-  var seen = new Map();
+const parseBox = (input: string): Box => {
+  const seen = new Map();
 
-  for (let chr of input.trim().split("")) {
+  for (const chr of input.trim().split("")) {
     if (!seen.has(chr)) {
       seen.set(chr, 0);
     }
@@ -21,9 +20,9 @@ const parseBox = function (input: string): Box {
     seen.set(chr, seen.get(chr) + 1);
   }
 
-  var twos = 0;
-  var threes = 0;
-  for (let key of seen.keys()) {
+  let twos = 0;
+  let threes = 0;
+  for (const key of seen.keys()) {
     if (seen.get(key) === 2) {
       twos += 1;
     } else if (seen.get(key) === 3) {
@@ -31,15 +30,15 @@ const parseBox = function (input: string): Box {
     }
   }
 
-  return { twos: twos, threes: threes };
+  return { twos, threes };
 };
 
-const solve1 = function (file: string): number {
+const solve1 = (file: string): number => {
   const lines = parse(file);
 
-  var twos = 0;
-  var threes = 0;
-  for (let line of lines) {
+  let twos = 0;
+  let threes = 0;
+  for (const line of lines) {
     const box = parseBox(line);
     twos += box.twos > 0 ? 1 : 0;
     threes += box.threes > 0 ? 1 : 0;
@@ -49,7 +48,7 @@ const solve1 = function (file: string): number {
 };
 
 // from https://gist.github.com/keesey/e09d0af833476385b9ee13b6d26a2b84
-const levenshtein = function (a: string, b: string): number {
+const levenshtein = (a: string, b: string): number => {
   const an = a ? a.length : 0;
   const bn = b ? b.length : 0;
   if (an === 0) {
@@ -60,7 +59,8 @@ const levenshtein = function (a: string, b: string): number {
   }
   const matrix = new Array<number[]>(bn + 1);
   for (let i = 0; i <= bn; ++i) {
-    let row = (matrix[i] = new Array<number>(an + 1));
+    // eslint-disable-next-line no-multi-assign
+    const row = (matrix[i] = new Array<number>(an + 1));
     row[0] = i;
   }
   const firstRow = matrix[0];
@@ -74,8 +74,8 @@ const levenshtein = function (a: string, b: string): number {
       } else {
         matrix[i][j] =
           Math.min(
-            matrix[i - 1][j - 1], // substitution
-            matrix[i][j - 1], // insertion
+            matrix[i - 1][j - 1],
+            matrix[i][j - 1],
             matrix[i - 1][j] // deletion
           ) + 1;
       }
@@ -90,15 +90,15 @@ interface MostCommon {
   distance: number;
 }
 
-const solve2 = function (file: string): number {
+const solve2 = (file: string): number => {
   const lines = parse(file);
 
-  var least: MostCommon = { line1: "", line2: "", distance: 27 };
-  for (let line1 of lines) {
-    for (let line2 of lines) {
+  let least: MostCommon = { line1: "", line2: "", distance: 27 };
+  for (const line1 of lines) {
+    for (const line2 of lines) {
       const distance = levenshtein(line1, line2);
       if (distance > 0 && distance < least.distance) {
-        least = { line1: line1, line2: line2, distance: distance };
+        least = { line1, line2, distance };
       }
     }
   }
@@ -111,5 +111,5 @@ const solve2 = function (file: string): number {
 assert(solve1("./example.txt") === 12);
 console.log(solve1("./input.txt"));
 
-//assert(solve2("./example2.txt") === 2);
+// assert(solve2("./example2.txt") === 2);
 console.log(solve2("./input.txt"));

@@ -1,13 +1,12 @@
-import { strict as assert } from 'assert';
-import { readFileSync } from 'fs';
+import { strict as assert } from "assert";
+import { readFileSync } from "fs";
 
-const parse = (file: string): string[] => readFileSync(file, 'utf-8')
-  .trim()
-  .split('\n');
+const parse = (file: string): string[] =>
+  readFileSync(file, "utf-8").trim().split("\n");
 
 interface Result {
   sum: number;
-  pos: number
+  pos: number;
 }
 
 const find = (start: number, data: string[]): Result => {
@@ -31,7 +30,7 @@ const find = (start: number, data: string[]): Result => {
 };
 
 const solve1 = (file: string): number => {
-  const data = parse(file)[0].split(' ');
+  const data = parse(file)[0].split(" ");
   return find(0, data).sum;
 };
 
@@ -62,12 +61,12 @@ const find2 = (start: number, data: string[]): Result => {
 };
 
 const solve2 = (file: string): number => {
-  const data = parse(file)[0].split(' ');
+  const data = parse(file)[0].split(" ");
   return find2(0, data).sum;
 };
 
-assert(solve1('./example.txt') === 138);
-console.log(solve1('./input.txt'));
+assert(solve1("./example.txt") === 138);
+console.log(solve1("./input.txt"));
 
-assert(solve2('./example.txt') === 66);
-console.log(solve2('./input.txt'));
+assert(solve2("./example.txt") === 66);
+console.log(solve2("./input.txt"));

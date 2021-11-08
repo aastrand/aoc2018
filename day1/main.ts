@@ -1,7 +1,7 @@
 import { strict as assert } from "assert";
 import { readFileSync } from "fs";
 
-const solve1 = function (file: string): number {
+const solve1 = (file: string): number => {
   const nums: number[] = readFileSync(file, "utf-8")
     .trim()
     .split("\n")
@@ -15,14 +15,14 @@ const solve2 = function (file: string): number {
     .split("\n")
     .map((num) => +num);
 
-  var seen: Set<number> = new Set<number>();
-  var sum: number = 0;
-  var found: boolean = false;
+  const seen: Set<number> = new Set<number>();
+  let sum: number = 0;
+  let found: boolean = false;
 
   while (!found) {
-    for (let num of nums) {
+    for (const num of nums) {
       seen.add(sum);
-      sum = sum + num;
+      sum += num;
 
       if (seen.has(sum)) {
         found = true;

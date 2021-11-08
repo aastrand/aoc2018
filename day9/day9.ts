@@ -1,5 +1,5 @@
-import { strict as assert } from 'assert';
-import LinkedList from 'ts-linked-list';
+import { strict as assert } from "assert";
+import LinkedList from "ts-linked-list";
 
 const solve1 = (numPlayers: number, maxValue: number): number => {
   const players: Array<number> = new Array(numPlayers);

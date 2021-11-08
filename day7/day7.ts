@@ -1,17 +1,18 @@
-import { strict as assert } from 'assert';
-import { readFileSync } from 'fs';
+import { strict as assert } from "assert";
+import { readFileSync } from "fs";
 
-const parse = (file: string): string[] => readFileSync(file, 'utf-8')
-  .trim()
-  .split('\n');
+const parse = (file: string): string[] =>
+  readFileSync(file, "utf-8").trim().split("\n");
 
-const buildGraph = (lines: string[]): [Map<string, Array<string>>, Map<string, Array<string>>] => {
+const buildGraph = (
+  lines: string[]
+): [Map<string, Array<string>>, Map<string, Array<string>>] => {
   const graph: Map<string, Array<string>> = new Map();
   const reverse: Map<string, Array<string>> = new Map();
   for (const line of lines) {
-    const parts = line.split(' must be finished before step ');
-    const from = parts[0].split('Step ')[1];
-    const to = parts[1].split(' can begin.')[0];
+    const parts = line.split(" must be finished before step ");
+    const from = parts[0].split("Step ")[1];
+    const to = parts[1].split(" can begin.")[0];
 
     let children = graph.get(from);
     if (!children) {
@@ -31,7 +32,9 @@ const buildGraph = (lines: string[]): [Map<string, Array<string>>, Map<string, A
   return [graph, reverse];
 };
 
-const findStartEnd = (graph: Map<string, Array<string>>): [string[], string] => {
+const findStartEnd = (
+  graph: Map<string, Array<string>>
+): [string[], string] => {
   const values: Array<string> = [];
   for (const children of graph.values()) {
     for (const child of children) {
@@ -58,7 +61,7 @@ const solve1 = (file: string): string => {
 
     let cur: string;
     while (true) {
-      cur = queue.shift() || '';
+      cur = queue.shift() || "";
       const parents = before.get(cur) || [];
       let ready = true;
       for (const parent of parents) {
@@ -77,7 +80,11 @@ const solve1 = (file: string): string => {
     visited.push(cur);
 
     for (const child of graph.get(cur) || []) {
-      if (!visited.includes(child) && !queue.includes(child) && child !== ends[1]) {
+      if (
+        !visited.includes(child) &&
+        !queue.includes(child) &&
+        child !== ends[1]
+      ) {
         queue.push(child);
       }
     }
@@ -85,10 +92,14 @@ const solve1 = (file: string): string => {
 
   visited.push(ends[1]);
 
-  return visited.join('');
+  return visited.join("");
 };
 
-const endTime = (clock: number, timeToComplete: number, job: string): number => {
+const endTime = (
+  clock: number,
+  timeToComplete: number,
+  job: string
+): number => {
   const time = clock + timeToComplete + job.charCodeAt(0) - 64;
   return time;
 };
@@ -104,7 +115,11 @@ const inProgress = (child: string, workers: [string, number][]): boolean => {
   return status;
 };
 
-const solve2 = (file: string, timeToComplete: number, numWorkers: number): number => {
+const solve2 = (
+  file: string,
+  timeToComplete: number,
+  numWorkers: number
+): number => {
   const graphs = buildGraph(parse(file));
   const graph = graphs[0];
   const before = graphs[1];
@@ -163,7 +178,11 @@ const solve2 = (file: string, timeToComplete: number, numWorkers: number): numbe
       if (clock >= worker[1]) {
         visited.push(worker[0]);
         for (const child of graph.get(worker[0]) || []) {
-          if (!visited.includes(child) && !queue.includes(child) && child !== ends[1]) {
+          if (
+            !visited.includes(child) &&
+            !queue.includes(child) &&
+            child !== ends[1]
+          ) {
             if (!inProgress(child, workers)) {
               queue.push(child);
             }
@@ -181,8 +200,8 @@ const solve2 = (file: string, timeToComplete: number, numWorkers: number): numbe
   return endTime(clock, timeToComplete, ends[1]) - 1;
 };
 
-assert(solve1('./example.txt') === 'CABDFE');
-console.log(solve1('./input.txt'));
+assert(solve1("./example.txt") === "CABDFE");
+console.log(solve1("./input.txt"));
 
-assert(solve2('./example.txt', 0, 2) === 15);
-console.log(solve2('./input.txt', 60, 5));
+assert(solve2("./example.txt", 0, 2) === 15);
+console.log(solve2("./input.txt", 60, 5));
