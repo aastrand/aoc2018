@@ -1,11 +1,11 @@
-import { strict as assert } from 'assert';
+import { strict as assert } from "assert";
 
 const GRID_SIZE: number = 300;
 
 const hundredsDigit = (level: number): number => {
   let digit = 0;
   if (level % 1000 > 99) {
-    digit = +(`${level % 1000}`).charAt(0);
+    digit = +`${level % 1000}`.charAt(0);
   }
 
   return digit;
@@ -51,7 +51,7 @@ const createGrid = (serial: number): Map<string, number> => {
 
 const findMax = (grid: Map<string, number>, size: number): [string, number] => {
   let maxLevel = 0;
-  let maxPos = '';
+  let maxPos = "";
 
   for (let x = 1; x < GRID_SIZE + 1 - size; x++) {
     for (let y = 1; y < GRID_SIZE + 1 - size; y++) {
@@ -82,7 +82,7 @@ const solve2 = (serial: number): string => {
   const grid = createGrid(serial);
 
   let bestSize = 0;
-  let maxPos = '';
+  let maxPos = "";
   let maxGridSize = 0;
 
   for (let size = 12; size < 17; size++) {
@@ -108,8 +108,8 @@ assert(powerLevel(122, 79, 57) === -5);
 assert(powerLevel(217, 196, 39) === 0);
 assert(powerLevel(101, 153, 71) === 4);
 
-assert(solve1(18) === '33,45');
-assert(solve1(42) === '21,61');
+assert(solve1(18) === "33,45");
+assert(solve1(42) === "21,61");
 
 console.log(solve1(5093));
 
@@ -117,11 +117,11 @@ console.log(solve1(5093));
 For grid serial number 18, the largest total square (with a total power of 113) is 16x16
 and has a top-left corner of 90,269, so its identifier is 90,269,16.
 */
-assert(solve2(18) === '90,269,16');
+assert(solve2(18) === "90,269,16");
 /*
 For grid serial number 42, the largest total square (with a total power of 119) is 12x12
 and has a top-left corner of 232,251, so its identifier is 232,251,12.
 */
-assert(solve2(42) === '232,251,12');
+assert(solve2(42) === "232,251,12");
 
 console.log(solve2(5093));

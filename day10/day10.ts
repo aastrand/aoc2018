@@ -1,8 +1,7 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 
-const parse = (file: string): string[] => readFileSync(file, 'utf-8')
-  .trim()
-  .split('\n');
+const parse = (file: string): string[] =>
+  readFileSync(file, "utf-8").trim().split("\n");
 
 interface Point {
   x: number;
@@ -15,13 +14,16 @@ const parsePoints = (lines: string[]): Point[] => {
   const points = [];
 
   for (const line of lines) {
-    const base = line.split('> velocity=<');
-    const x = +base[0].split(',')[0].split('position=<')[1];
-    const y = +base[0].split(',')[1];
-    const dx = +base[1].split(',')[0];
-    const dy = +base[1].split(',')[1].slice(0, -1);
+    const base = line.split("> velocity=<");
+    const x = +base[0].split(",")[0].split("position=<")[1];
+    const y = +base[0].split(",")[1];
+    const dx = +base[1].split(",")[0];
+    const dy = +base[1].split(",")[1].slice(0, -1);
     points.push({
-      x, y, dx, dy,
+      x,
+      y,
+      dx,
+      dy,
     });
   }
 
@@ -84,15 +86,15 @@ const solve1 = (file: string): void => {
   }
 
   for (let y = minY - 1; y < maxY + 1; y++) {
-    let lineBuffer = '';
+    let lineBuffer = "";
     for (let x = minX - 1; x < maxX + 1; x++) {
       const point = grid.get(`${x}, ${y}`);
-      lineBuffer += point ? '#' : '.';
+      lineBuffer += point ? "#" : ".";
     }
     console.log(lineBuffer);
   }
   console.log(`appeared after ${counter - 1} seconds`);
 };
 
-solve1('./example.txt');
-solve1('./input.txt');
+solve1("./example.txt");
+solve1("./input.txt");

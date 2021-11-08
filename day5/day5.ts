@@ -1,12 +1,12 @@
-import { strict as assert } from 'assert';
-import { readFileSync } from 'fs';
-import LinkedList from 'ts-linked-list';
+import { strict as assert } from "assert";
+import { readFileSync } from "fs";
+import LinkedList from "ts-linked-list";
 
 const CAPITAL_DIFF = 32;
 
 const makeList = (line: string): LinkedList<number> => {
   const list = new LinkedList();
-  for (const chr of line.split('')) {
+  for (const chr of line.split("")) {
     list.append(chr.charCodeAt(0));
   }
 
@@ -18,7 +18,7 @@ const fullyReact = (list: LinkedList<number>): LinkedList<number> => {
   let cur = list.head;
   do {
     if (!cur || !cur.data || !cur.next || !cur.next.data) {
-      throw 'unexpected null in list';
+      throw "unexpected null in list";
     }
 
     if (Math.abs(cur.data - cur.next.data) === CAPITAL_DIFF) {
@@ -45,10 +45,11 @@ const fullyReact = (list: LinkedList<number>): LinkedList<number> => {
   return list;
 };
 
-const solve1 = (file: string): number => fullyReact(makeList(readFileSync(file, 'utf-8').trim())).length;
+const solve1 = (file: string): number =>
+  fullyReact(makeList(readFileSync(file, "utf-8").trim())).length;
 
 const solve2 = (file: string): number => {
-  const line: string = readFileSync(file, 'utf-8').trim();
+  const line: string = readFileSync(file, "utf-8").trim();
 
   let minLength = line.length;
   // A - Z
@@ -57,7 +58,7 @@ const solve2 = (file: string): number => {
     let cur = list.head;
     while (cur !== null) {
       const newCur = cur.next;
-      if (cur.data === i || (cur.data - CAPITAL_DIFF) === i) {
+      if (cur.data === i || cur.data - CAPITAL_DIFF === i) {
         cur.remove();
       }
       cur = newCur;
@@ -73,8 +74,8 @@ const solve2 = (file: string): number => {
   return minLength;
 };
 
-assert(solve1('./example.txt') === 10);
-console.log(solve1('./input.txt'));
+assert(solve1("./example.txt") === 10);
+console.log(solve1("./input.txt"));
 
-assert(solve2('./example.txt') === 4);
-console.log(solve2('./input.txt'));
+assert(solve2("./example.txt") === 4);
+console.log(solve2("./input.txt"));
