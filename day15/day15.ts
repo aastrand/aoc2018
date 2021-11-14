@@ -118,23 +118,76 @@ export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
   return graph;
 };
 
-export const findPaths = (
-  paths: Array<Array<string>>,
-  path: Array<string>,
-  parent: Map<string, Array<string>>,
-  u: string
-): void => {
-  if (u === "self") {
-    paths.push(Object.assign([], path));
-    return;
+export const print = (grid: Grid, units: Map<string, Unit>): string[] => {
+  const out = [];
+  for (let y = 0; y < grid.maxY + 1; y++) {
+    let line = [];
+    let unitsLine = [];
+    for (let x = 0; x < grid.maxX + 1; x++) {
+      const pos = toPos(x, y);
+      const point = grid.data.get(pos);
+      const unit = units.get(pos);
+
+      if (point) {
+        line.push(unit ? Race[unit.race] : point);
+      }
+      if (unit) {
+        unitsLine.push(unit.toString());
+      }
+    }
+
+    out.push(`${line.join("")}   ${unitsLine.join(", ")}`);
   }
 
-  const parents = parent.get(u) || [];
-  for (const p of parents) {
-    path.push(u);
-    findPaths(paths, path, parent, p);
-    path.pop();
+  return out;
+};
+
+const readOrderSort = (
+  coordA: [number, number],
+  coordB: [number, number]
+): number => {
+  if (coordA[1] > coordB[1]) {
+    return 1;
+  } else if (coordA[1] < coordB[1]) {
+    return -1;
+  } else {
+    if (coordA[0] > coordB[0]) {
+      return 1;
+    } else if (coordA[0] < coordB[0]) {
+      return -1;
+    } else {
+      return 0;
+    }
   }
+};
+
+export const findPaths = (
+  start: string,
+  parents: Map<string, Array<string>>
+): Array<string> => {
+  const path = [];
+
+  let cur = start;
+  let curParents = parents.get(cur);
+  if (!curParents) {
+    return path;
+  }
+
+  path.push(cur);
+  while (curParents) {
+    curParents.sort((a, b) => {
+      const coordA = fromPos(a);
+      const coordB = fromPos(b);
+
+      return readOrderSort(coordA, coordB);
+    });
+    cur = curParents[0];
+    path.push(cur);
+    curParents = parents.get(cur);
+  }
+
+  path.reverse();
+  return path;
 };
 
 export const bfs = (
@@ -147,7 +200,6 @@ export const bfs = (
   const parent: Map<string, Array<string>> = new Map();
 
   queue.push(start);
-  parent.set(start, ["self"]);
   dist.set(start, 0);
 
   while (queue.length > 0) {
@@ -186,49 +238,13 @@ export const bfs = (
   return parent;
 };
 
-export const print = (grid: Grid, units: Map<string, Unit>): string[] => {
-  const out = [];
-  for (let y = 0; y < grid.maxY + 1; y++) {
-    let line = [];
-    let unitsLine = [];
-    for (let x = 0; x < grid.maxX + 1; x++) {
-      const pos = toPos(x, y);
-      const point = grid.data.get(pos);
-      const unit = units.get(pos);
-
-      if (point) {
-        line.push(unit ? Race[unit.race] : point);
-      }
-      if (unit) {
-        unitsLine.push(unit.toString());
-      }
-    }
-
-    out.push(`${line.join("")}   ${unitsLine.join(", ")}`);
-  }
-
-  return out;
-};
-
 export const getUnitsForRound = (units: Map<string, Unit>): Array<Unit> => {
   const existing: Array<[string, Unit]> = Array.from(units.entries());
   existing.sort((a, b) => {
     const coordA = fromPos(a[0]);
     const coordB = fromPos(b[0]);
 
-    if (coordA[1] > coordB[1]) {
-      return 1;
-    } else if (coordA[1] < coordB[1]) {
-      return -1;
-    } else {
-      if (coordA[0] > coordB[0]) {
-        return 1;
-      } else if (coordA[0] < coordB[0]) {
-        return -1;
-      } else {
-        return 0;
-      }
-    }
+    return readOrderSort(coordA, coordB);
   });
 
   const sortedUnits = [];
@@ -275,21 +291,13 @@ export const findOpenSpaces = (
   return spaces;
 };
 
-export const findShortestPaths = (
+export const findShortestPath = (
   start: string,
   end: string,
   graph: Map<string, Array<string>>,
   units: Map<string, Unit>
-): Array<Array<string>> => {
-  const parent = bfs(start, graph, units);
-  const paths: Array<Array<string>> = [];
-
-  findPaths(paths, [], parent, end);
-  for (const path of paths) {
-    path.reverse();
-  }
-
-  return paths;
+): Array<string> => {
+  return findPaths(end, bfs(start, graph, units));
 };
 
 export const findMove = (
@@ -300,7 +308,8 @@ export const findMove = (
 ): string | null => {
   const paths: Array<Array<string>> = [];
   for (const space of ends) {
-    for (const path of findShortestPaths(from, space, graph, units)) {
+    const path = findShortestPath(from, space, graph, units);
+    if (path && path.length > 0) {
       paths.push(path);
     }
   }
@@ -315,19 +324,7 @@ export const findMove = (
     const coordA = fromPos(a[1]);
     const coordB = fromPos(b[1]);
 
-    if (coordA[1] > coordB[1]) {
-      return 1;
-    } else if (coordA[1] < coordB[1]) {
-      return -1;
-    } else {
-      if (coordA[0] > coordB[0]) {
-        return 1;
-      } else if (coordA[0] < coordB[0]) {
-        return -1;
-      } else {
-        return 0;
-      }
-    }
+    return readOrderSort(coordA, coordB);
   });
 
   return paths.length > 0 ? paths[0][1] : null;
@@ -389,13 +386,33 @@ export const findAdjecentTarget = (
   return candidates.length > 0 ? candidates[0] : null;
 };
 
+class Outcome {
+  winner: Race;
+  rounds: number;
+  hitPoints: number;
+
+  constructor(winner: Race, rounds: number, hitPoints: number) {
+    this.winner = winner;
+    this.rounds = rounds;
+    this.hitPoints = hitPoints;
+  }
+
+  score(): number {
+    return this.rounds * this.hitPoints;
+  }
+}
+
 export const runCombat = (
   grid: Grid,
   graph: Map<string, Array<string>>,
-  units: Map<string, Unit>
-) => {
-  console.log(`Initially:`);
-  console.log(print(grid, units).join("\n"));
+  units: Map<string, Unit>,
+  shouldPrint: boolean = false
+): Outcome => {
+  if (shouldPrint) {
+    console.clear();
+    console.log(`Initially:`);
+    console.log(print(grid, units).join("\n"));
+  }
 
   let rounds = 0;
   let done = false;
@@ -466,20 +483,23 @@ export const runCombat = (
       }
     }
 
-    console.log(`After ${rounds} round${rounds > 1 ? "s" : ""}:`);
-    console.log(print(grid, units).join("\n"));
+    if (shouldPrint) {
+      console.clear();
+      console.log(`After ${rounds} round${rounds > 1 ? "s" : ""}:`);
+      console.log(print(grid, units).join("\n"));
+    }
   }
 
   let hitPoints = 0;
+  let winner: Race = null;
   units.forEach((unit, _) => {
     if (unit.hp > 0) {
       hitPoints += unit.hp;
+      winner = unit.race;
     }
   });
 
-  console.log("rounds: " + (rounds - 1) + " hitPoints: " + hitPoints);
-
-  return (rounds - 1) * hitPoints;
+  return new Outcome(winner, rounds - 1, hitPoints);
 };
 
 const solve1 = (file: string): number => {
@@ -488,16 +508,57 @@ const solve1 = (file: string): number => {
   const units = extractUnits(grid);
   const graph = parseGraph(grid);
 
-  return 0;
+  return runCombat(grid, graph, units, true).score();
 };
 
 const solve2 = (file: string): number => {
   const lines = parse(file);
+  let grid = parseGrid(lines);
+  let units = extractUnits(grid);
 
-  return 0;
+  const graph = parseGraph(grid);
+
+  let apBoost = 20;
+  let elvesCount = 0;
+  units.forEach((unit, _) => {
+    if (unit.race === Race.E) {
+      unit.ap += apBoost;
+      elvesCount++;
+    }
+  });
+
+  let outcome: Outcome = null;
+  let done = false;
+  while (!done) {
+    outcome = runCombat(grid, graph, units, false);
+
+    let curCount = 0;
+    units.forEach((unit, _) => {
+      if (unit.race === Race.E && unit.hp > 0) {
+        curCount++;
+      }
+    });
+
+    if (outcome.winner === Race.E && curCount === elvesCount) {
+      done = true;
+    }
+
+    grid = parseGrid(lines);
+    units = extractUnits(grid);
+
+    units.forEach((unit, _) => {
+      if (unit.race === Race.E) {
+        unit.ap += apBoost;
+      }
+    });
+
+    apBoost++;
+  }
+
+  return outcome.score();
 };
 
-//console.log(solve1("./input.txt"));
-
-// assert(solve2('./example.txt') === 2);
-console.log(solve2("./input.txt"));
+if (process.argv.length > 2 && process.argv[2] === "run") {
+  console.log(solve1("./input.txt"));
+  console.log(solve2("./input.txt"));
+}

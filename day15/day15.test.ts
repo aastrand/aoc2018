@@ -1,10 +1,12 @@
 import "jest";
 import {
+  bfs,
   extractUnits,
   findAdjecentTarget,
   findMove,
   findOpenSpaces,
-  findShortestPaths,
+  findPaths,
+  findShortestPath,
   findTargets,
   getUnitsForRound,
   moveUnit,
@@ -93,15 +95,13 @@ describe("Grid", () => {
     expect(graph.get("4,4")[3]).toBe("5,4");
   });
 
-  it("should findShortestPaths", async () => {
+  it("should findShortestPath", async () => {
     const grid = parseGrid(pathsExample.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
-    const paths = findShortestPaths("2,1", "4,2", graph, units);
-    expect(paths[0]).toEqual(["2,1", "2,2", "3,2", "4,2"]);
-    expect(paths[1]).toEqual(["2,1", "3,1", "3,2", "4,2"]);
-    expect(paths[2]).toEqual(["2,1", "3,1", "4,1", "4,2"]);
+    const path = findShortestPath("2,1", "4,2", graph, units);
+    expect(path).toEqual(["2,1", "3,1", "4,1", "4,2"]);
   });
 });
 
@@ -209,6 +209,16 @@ describe("Solve", () => {
     expect(openSpaces[5]).toBe("5,2");
   });
 
+  it("should findPaths", async () => {
+    const grid = parseGrid(example.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+    const parents = bfs("1,1", graph, units);
+
+    const path = findPaths("3,2", parents);
+    expect(path).toEqual(["1,1", "2,1", "3,1", "3,2"]);
+  });
+
   it("should findMove", async () => {
     const grid = parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
@@ -275,13 +285,110 @@ const example1 = `
 #######
 `;
 
+const example2 = `
+#######
+#G..#E#
+#E#E.E#
+#G.##.#
+#...#E#
+#...E.#
+#######
+`;
+
+const example3 = `
+#######   
+#E..EG#
+#.#G.E#
+#E.##E#
+#G..#.#
+#..E#.#
+#######
+`;
+
+const example4 = `
+#######
+#E.G#.#
+#.#G..#
+#G.#.G#
+#G..#.#
+#...E.#
+#######
+`;
+
+const example5 = `
+#######
+#.E...#
+#.#..G#
+#.###.#
+#E#G#G#
+#...#G#
+#######
+`;
+
+const example6 = `
+#########
+#G......#
+#.E.#...#
+#..##..G#
+#...##..#
+#...#...#
+#.G...G.#
+#.....G.#
+#########
+`;
+
 describe("Combat", () => {
   it("should runCombat(example1)", async () => {
     const grid = parseGrid(example1.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
-    const score = runCombat(grid, graph, units);
-    expect(score).toEqual(27730);
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(27730);
+  });
+
+  it("should runCombat(example2)", async () => {
+    const grid = parseGrid(example2.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(36334);
+  });
+
+  it("should runCombat(example3)", async () => {
+    const grid = parseGrid(example3.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(39514);
+  });
+
+  it("should runCombat(example4)", async () => {
+    const grid = parseGrid(example4.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(27755);
+  });
+
+  it("should runCombat(example5)", async () => {
+    const grid = parseGrid(example5.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(28944);
+  });
+
+  it("should runCombat(example6)", async () => {
+    const grid = parseGrid(example6.trim().split("\n"));
+    const units = extractUnits(grid);
+    const graph = parseGraph(grid);
+
+    const outcome = runCombat(grid, graph, units);
+    expect(outcome.score()).toEqual(18740);
   });
 });
