@@ -1,3 +1,4 @@
+/* eslint-disable no-bitwise */
 import { strict as assert } from "assert";
 import { readFileSync } from "fs";
 
@@ -7,6 +8,7 @@ class CPU {
   addr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] + this.regs[regB];
   }
+
   addi(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] + value;
   }
@@ -14,6 +16,7 @@ class CPU {
   mulr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] * this.regs[regB];
   }
+
   muli(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] * value;
   }
@@ -21,6 +24,7 @@ class CPU {
   banr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] & this.regs[regB];
   }
+
   bani(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] & value;
   }
@@ -28,6 +32,7 @@ class CPU {
   borr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] | this.regs[regB];
   }
+
   bori(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] | value;
   }
@@ -35,6 +40,7 @@ class CPU {
   setr(regA: number, _: number, outReg: number) {
     this.regs[outReg] = this.regs[regA];
   }
+
   seti(value: number, _: number, outReg: number) {
     this.regs[outReg] = value;
   }
@@ -42,9 +48,11 @@ class CPU {
   gtir(value: number, regB: number, outReg: number) {
     this.regs[outReg] = value > this.regs[regB] ? 1 : 0;
   }
+
   gtri(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] > value ? 1 : 0;
   }
+
   gtrr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] > this.regs[regB] ? 1 : 0;
   }
@@ -52,9 +60,11 @@ class CPU {
   eqir(value: number, regB: number, outReg: number) {
     this.regs[outReg] = value === this.regs[regB] ? 1 : 0;
   }
+
   eqri(regA: number, value: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] === value ? 1 : 0;
   }
+
   eqrr(regA: number, regB: number, outReg: number) {
     this.regs[outReg] = this.regs[regA] === this.regs[regB] ? 1 : 0;
   }
@@ -89,7 +99,7 @@ const solve1 = (file: string): number => {
 
   const cpu = new CPU();
 
-  let matches: Map<number, Set<string>> = new Map();
+  const matches: Map<number, Set<string>> = new Map();
   for (let i = 0; i < 16; i++) {
     matches.set(i, new Set());
   }
@@ -107,7 +117,7 @@ const solve1 = (file: string): number => {
       .split(", ")
       .map((n) => +n);
 
-    let matching = [];
+    const matching = [];
     for (const instrName of cpu.instructions) {
       for (let i = 0; i < before.length; i++) {
         cpu.regs[i] = before[i];
@@ -131,7 +141,7 @@ const solve1 = (file: string): number => {
     }
   }
 
-  let mapping: Array<[string, number]> = [];
+  const mapping: Array<[string, number]> = [];
   for (let i = 0; i < 16; i++) {
     let cur = "";
     let found = false;
@@ -153,11 +163,11 @@ const solve1 = (file: string): number => {
   mapping.sort((a, b) => {
     if (a[1] > b[1]) {
       return 1;
-    } else if (a[1] < b[1]) {
-      return -1;
-    } else {
-      return 0;
     }
+    if (a[1] < b[1]) {
+      return -1;
+    }
+    return 0;
   });
   for (const pair of mapping) {
     console.log(`"${pair[0]}", // ${pair[1]}`);

@@ -41,7 +41,7 @@ const findClosest = (
 ): string => {
   let minPos: Coord | null = null;
   let minDistance: number = Number.MAX_SAFE_INTEGER;
-  let minDistanceCount: number = 0;
+  let minDistanceCount = 0;
   for (const pos of coords.values()) {
     const distance = manHattanDistance({
       x1: pos.x,
@@ -118,7 +118,7 @@ const solve1 = (file: string): number => {
     }
   }
 
-  let maxSize: number = 0;
+  let maxSize = 0;
   for (const area of areas.keys()) {
     if (!excludedAreas.has(area)) {
       const size = areas.get(area) || 0;

@@ -66,7 +66,7 @@ const solve1 = (file: string): number => {
 const solve2 = (file: string): number => {
   const lines = parse(file);
 
-  const idToNumOfInches: Map<String, number> = new Map();
+  const idToNumOfInches: Map<string, number> = new Map();
   for (const line of lines) {
     const cut = parseCut(line);
     idToNumOfInches.set(cut.id, cut.coords.length);

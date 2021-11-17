@@ -14,7 +14,7 @@ const makeList = (line: string): LinkedList<number> => {
 };
 
 const fullyReact = (list: LinkedList<number>): LinkedList<number> => {
-  let modified: boolean = false;
+  let modified = false;
   let cur = list.head;
   do {
     if (!cur || !cur.data || !cur.next || !cur.next.data) {

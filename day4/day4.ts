@@ -33,8 +33,8 @@ const parseLog = (lines: string[]): Array<LogLine> => {
 
 const getGuardToMinutes = (
   logs: Array<LogLine>
-): Map<String, Array<number>> => {
-  const guardToMinutes: Map<String, Array<number>> = new Map();
+): Map<string, Array<number>> => {
+  const guardToMinutes: Map<string, Array<number>> = new Map();
   let guard: string | undefined;
   let asleep: Date | undefined | null;
 
@@ -79,10 +79,10 @@ const getGuardToMinutes = (
 
 const solve1 = (file: string): number => {
   const logs: Array<LogLine> = parseLog(parse(file));
-  const guardToMinutes: Map<String, Array<number>> = getGuardToMinutes(logs);
+  const guardToMinutes: Map<string, Array<number>> = getGuardToMinutes(logs);
 
   let max = 0;
-  let maxGuard: String | undefined;
+  let maxGuard: string | undefined;
   for (const g of guardToMinutes.keys()) {
     const minutes = guardToMinutes.get(g);
     if (minutes && minutes.length > max) {
@@ -120,12 +120,12 @@ const solve1 = (file: string): number => {
 
 const solve2 = (file: string): number => {
   const logs: Array<LogLine> = parseLog(parse(file));
-  const guardToMinutes: Map<String, Array<number>> = getGuardToMinutes(logs);
+  const guardToMinutes: Map<string, Array<number>> = getGuardToMinutes(logs);
 
   let maxFreq = 0;
   let maxMin = 0;
-  let maxGuard: String | undefined;
-  const guardToFreq: Map<String, Map<number, number>> = new Map();
+  let maxGuard: string | undefined;
+  const guardToFreq: Map<string, Map<number, number>> = new Map();
 
   for (const guard of guardToMinutes.keys()) {
     let freqMap = guardToFreq.get(guard);
