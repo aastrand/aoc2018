@@ -17,7 +17,7 @@ const solve1 = (n: number): string => {
 
   let r = "";
   for (let i = n; i < n + 10; i++) {
-    r = r + recipes[i];
+    r += recipes[i];
   }
 
   return r;
@@ -29,10 +29,10 @@ const indexOf = (start: number, r: Array<number>, n: Array<number>): number => {
   }
 
   for (let i = start; i < r.length - n.length + 1; i++) {
-    if (r[i] == n[0]) {
+    if (r[i] === n[0]) {
       let equal = true;
       for (let j = 0; j < n.length; j++) {
-        equal = equal && r[i + j] == n[j];
+        equal = equal && r[i + j] === n[j];
       }
       if (equal) {
         return i;
@@ -50,21 +50,20 @@ const endsIn = (r: Array<number>, n: Array<number>): number => {
 
   let equal = true;
   for (let i = n.length - 1; i > -1; i--) {
-    equal = equal && r[r.length - 1 - (n.length - i - 1)] == n[i];
+    equal = equal && r[r.length - 1 - (n.length - i - 1)] === n[i];
   }
 
   return equal ? r.length - n.length : -1;
 };
 
 const solve2 = (n: string): number => {
-  const nums = n.split("").map((n) => +n);
-  const MAX_LEN = 4294967296;
+  const nums = n.split("").map((num) => +num);
   const recipes: Array<number> = [3, 7];
 
   let e1 = 0;
   let e2 = 1;
 
-  let r: number = -1;
+  let r = -1;
   while (r === -1) {
     const sum = recipes[e1] + recipes[e2];
     const digits = `${sum}`;
@@ -75,7 +74,7 @@ const solve2 = (n: string): number => {
     e2 = (e2 + recipes[e2] + 1) % recipes.length;
 
     r = indexOf(recipes.length - nums.length, recipes, nums);
-    if (r == -1) {
+    if (r === -1) {
       r = indexOf(recipes.length - nums.length - 1, recipes, nums);
     }
   }

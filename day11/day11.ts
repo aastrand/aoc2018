@@ -1,6 +1,6 @@
 import { strict as assert } from "assert";
 
-const GRID_SIZE: number = 300;
+const GRID_SIZE = 300;
 
 const hundredsDigit = (level: number): number => {
   let digit = 0;

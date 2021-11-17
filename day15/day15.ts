@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { readFileSync } from "fs";
 
 const parse = (file: string): string[] =>
@@ -8,11 +9,19 @@ export enum Race {
   G,
 }
 
+const toPos = (x: number, y: number): string => {
+  return `${x},${y}`;
+};
+
 export class Unit {
   race: Race;
+
   hp = 200;
+
   ap = 3;
+
   x: number;
+
   y: number;
 
   constructor(race: Race, x: number, y: number) {
@@ -40,10 +49,6 @@ export interface Grid {
   maxY: number;
 }
 
-const toPos = (x: number, y: number): string => {
-  return `${x},${y}`;
-};
-
 export const parseGrid = (lines: string[]): Grid => {
   const data: Map<string, string> = new Map();
   let maxX = 0;
@@ -63,6 +68,11 @@ export const parseGrid = (lines: string[]): Grid => {
   }
 
   return { data, maxX, maxY };
+};
+
+const fromPos = (pos: string): [number, number] => {
+  const parts = pos.split(",");
+  return [+parts[0], +parts[1]];
 };
 
 export const extractUnits = (grid: Grid): Map<string, Unit> => {
@@ -85,11 +95,6 @@ const directions = [
   [1, 0], // right
 ];
 
-const fromPos = (pos: string): [number, number] => {
-  const parts = pos.split(",");
-  return [+parts[0], +parts[1]];
-};
-
 export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
   const graph = new Map();
 
@@ -97,12 +102,12 @@ export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
     if (value === ".") {
       let neighbours = graph.get(value);
       if (!neighbours) {
-        neighbours = new Array();
+        neighbours = [];
         graph.set(pos, neighbours);
       }
 
       const coords = fromPos(pos);
-      for (let direction of directions) {
+      for (const direction of directions) {
         const neighbourPos = toPos(
           coords[0] + direction[0],
           coords[1] + direction[1]
@@ -121,8 +126,8 @@ export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
 export const print = (grid: Grid, units: Map<string, Unit>): string[] => {
   const out = [];
   for (let y = 0; y < grid.maxY + 1; y++) {
-    let line = [];
-    let unitsLine = [];
+    const line = [];
+    const unitsLine = [];
     for (let x = 0; x < grid.maxX + 1; x++) {
       const pos = toPos(x, y);
       const point = grid.data.get(pos);
@@ -148,17 +153,17 @@ const readOrderSort = (
 ): number => {
   if (coordA[1] > coordB[1]) {
     return 1;
-  } else if (coordA[1] < coordB[1]) {
-    return -1;
-  } else {
-    if (coordA[0] > coordB[0]) {
-      return 1;
-    } else if (coordA[0] < coordB[0]) {
-      return -1;
-    } else {
-      return 0;
-    }
   }
+  if (coordA[1] < coordB[1]) {
+    return -1;
+  }
+  if (coordA[0] > coordB[0]) {
+    return 1;
+  }
+  if (coordA[0] < coordB[0]) {
+    return -1;
+  }
+  return 0;
 };
 
 export const findPaths = (
@@ -214,7 +219,7 @@ export const bfs = (
         if (neighDist === undefined) {
           neighDist = Number.MAX_SAFE_INTEGER;
         }
-        let cur = dist.get(u);
+        const cur = dist.get(u);
 
         let path = parent.get(v);
         if (!path) {
@@ -262,7 +267,7 @@ export const findTargets = (
   const targets = [];
 
   units.forEach((target, _) => {
-    if (target !== unit && target.race != unit.race && target.hp > 0) {
+    if (target !== unit && target.race !== unit.race && target.hp > 0) {
       targets.push(target);
     }
   });
@@ -317,7 +322,8 @@ export const findMove = (
   paths.sort((a, b) => {
     if (a.length < b.length) {
       return -1;
-    } else if (a.length > b.length) {
+    }
+    if (a.length > b.length) {
       return 1;
     }
 
@@ -364,23 +370,23 @@ export const findAdjecentTarget = (
   candidates.sort((a, b) => {
     if (a.hp < b.hp) {
       return -1;
-    } else if (a.hp > b.hp) {
-      return 1;
-    } else {
-      if (a.y > b.y) {
-        return 1;
-      } else if (a.y < b.y) {
-        return -1;
-      } else {
-        if (a.x > b.x) {
-          return 1;
-        } else if (a.x < b.x) {
-          return -1;
-        } else {
-          return 0;
-        }
-      }
     }
+    if (a.hp > b.hp) {
+      return 1;
+    }
+    if (a.y > b.y) {
+      return 1;
+    }
+    if (a.y < b.y) {
+      return -1;
+    }
+    if (a.x > b.x) {
+      return 1;
+    }
+    if (a.x < b.x) {
+      return -1;
+    }
+    return 0;
   });
 
   return candidates.length > 0 ? candidates[0] : null;
@@ -388,7 +394,9 @@ export const findAdjecentTarget = (
 
 class Outcome {
   winner: Race;
+
   rounds: number;
+
   hitPoints: number;
 
   constructor(winner: Race, rounds: number, hitPoints: number) {
@@ -406,7 +414,7 @@ export const runCombat = (
   grid: Grid,
   graph: Map<string, Array<string>>,
   units: Map<string, Unit>,
-  shouldPrint: boolean = false
+  shouldPrint = false
 ): Outcome => {
   if (shouldPrint) {
     console.clear();
@@ -433,7 +441,7 @@ export const runCombat = (
       If no targets remain, combat ends.
       */
       const targets = findTargets(unit, units);
-      if (targets.length == 0) {
+      if (targets.length === 0) {
         done = true;
         break;
       }

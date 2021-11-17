@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 import { strict as assert } from "assert";
 import { readFileSync } from "fs";
 
@@ -8,9 +9,9 @@ const coord = (x: number, y: number): string => {
   return `${x},${y}`;
 };
 
-const split = (coord: string): [number, number] => {
-  const split = coord.split(",");
-  return [+split[0], +split[1]];
+const split = (c: string): [number, number] => {
+  const s = c.split(",");
+  return [+s[0], +s[1]];
 };
 
 const makeGrid = (lines: string[]): Map<string, string> => {
@@ -44,7 +45,7 @@ interface Car {
 }
 
 const makeCars = (grid: Map<string, string>) => {
-  let cars: Array<Car> = [];
+  const cars: Array<Car> = [];
 
   let id = 0;
   grid.forEach((value, key) => {
@@ -183,7 +184,7 @@ const newDirection = (nextChar: string, car: Car): Direction | null => {
 };
 
 const collisions = (cars: Array<Car>): string | null => {
-  let positions = new Map();
+  const positions = new Map();
 
   for (const car of cars) {
     const pos = coord(car.x, car.y);
@@ -211,17 +212,17 @@ const run = (
     cars.sort((a, b) => {
       if (a.y < b.y) {
         return -1;
-      } else if (a.y > b.y) {
-        return 1;
-      } else {
-        if (a.x < b.x) {
-          return -1;
-        } else if (a.x > b.x) {
-          return 1;
-        } else {
-          return 0;
-        }
       }
+      if (a.y > b.y) {
+        return 1;
+      }
+      if (a.x < b.x) {
+        return -1;
+      }
+      if (a.x > b.x) {
+        return 1;
+      }
+      return 0;
     });
 
     for (const car of cars) {

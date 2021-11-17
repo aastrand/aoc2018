@@ -16,8 +16,8 @@ const solve2 = function (file: string): number {
     .map((num) => +num);
 
   const seen: Set<number> = new Set<number>();
-  let sum: number = 0;
-  let found: boolean = false;
+  let sum = 0;
+  let found = false;
 
   while (!found) {
     for (const num of nums) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { strict as assert } from "assert";
 import { readFileSync } from "fs";
 
@@ -8,21 +9,21 @@ const grow = (lines: string[], generations: number): [number, string] => {
   let state = lines[0].split("initial state: ")[1];
 
   const transform: Map<string, string> = new Map();
-  for (let line of lines.slice(2)) {
+  for (const line of lines.slice(2)) {
     const parts = line.split(" => ");
     transform.set(parts[0], parts[1]);
   }
 
-  //console.log(`0: ${state}`);
+  // console.log(`0: ${state}`);
   let offset = 0;
   for (let gen = 1; gen < generations + 1; gen++) {
     if (state[0] === "#") {
-      state = "." + state;
+      state = `.${state}`;
       offset += 1;
     }
 
     if (state[state.length - 1] === "#") {
-      state = state + ".";
+      state += ".";
     }
 
     let newState = "";
@@ -45,7 +46,7 @@ const grow = (lines: string[], generations: number): [number, string] => {
     }
 
     state = newState;
-    //console.log(`${gen}: ${state}`);
+    // console.log(`${gen}: ${state}`);
   }
 
   return [offset, state];
