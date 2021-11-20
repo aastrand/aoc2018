@@ -1,5 +1,8 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-classes-per-file */
 import { readFileSync } from "fs";
+import { Grid } from "../grid";
 
 const parse = (file: string): string[] =>
   readFileSync(file, "utf-8").trim().split("\n");
@@ -8,10 +11,6 @@ export enum Race {
   E = 1,
   G,
 }
-
-const toPos = (x: number, y: number): string => {
-  return `${x},${y}`;
-};
 
 export class Unit {
   race: Race;
@@ -35,7 +34,7 @@ export class Unit {
   }
 
   pos(): string {
-    return toPos(this.x, this.y);
+    return Grid.toPos(this.x, this.y);
   }
 
   toString(): string {
@@ -43,43 +42,11 @@ export class Unit {
   }
 }
 
-export interface Grid {
-  data: Map<string, string>;
-  maxX: number;
-  maxY: number;
-}
-
-export const parseGrid = (lines: string[]): Grid => {
-  const data: Map<string, string> = new Map();
-  let maxX = 0;
-  let maxY = 0;
-
-  for (let y = 0; y < lines.length; y++) {
-    for (let x = 0; x < lines[y].length; x++) {
-      data.set(toPos(x, y), lines[y][x]);
-
-      if (maxX < x) {
-        maxX = x;
-      }
-      if (maxY < y) {
-        maxY = y;
-      }
-    }
-  }
-
-  return { data, maxX, maxY };
-};
-
-const fromPos = (pos: string): [number, number] => {
-  const parts = pos.split(",");
-  return [+parts[0], +parts[1]];
-};
-
-export const extractUnits = (grid: Grid): Map<string, Unit> => {
+export const extractUnits = (grid: Grid<string>): Map<string, Unit> => {
   const units = new Map();
   grid.data.forEach((value, pos) => {
     if (value === "G" || value === "E") {
-      const coords = fromPos(pos);
+      const coords = grid.fromPos(pos);
       units.set(pos, new Unit(Race[value], coords[0], coords[1]));
       grid.data.set(pos, ".");
     }
@@ -95,7 +62,7 @@ const directions = [
   [1, 0], // right
 ];
 
-export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
+export const parseGraph = (grid: Grid<string>): Map<string, Array<string>> => {
   const graph = new Map();
 
   grid.data.forEach((value, pos) => {
@@ -106,9 +73,9 @@ export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
         graph.set(pos, neighbours);
       }
 
-      const coords = fromPos(pos);
+      const coords = grid.fromPos(pos);
       for (const direction of directions) {
-        const neighbourPos = toPos(
+        const neighbourPos = grid.toPos(
           coords[0] + direction[0],
           coords[1] + direction[1]
         );
@@ -123,13 +90,16 @@ export const parseGraph = (grid: Grid): Map<string, Array<string>> => {
   return graph;
 };
 
-export const print = (grid: Grid, units: Map<string, Unit>): string[] => {
+export const print = (
+  grid: Grid<string>,
+  units: Map<string, Unit>
+): string[] => {
   const out = [];
   for (let y = 0; y < grid.maxY + 1; y++) {
     const line = [];
     const unitsLine = [];
     for (let x = 0; x < grid.maxX + 1; x++) {
-      const pos = toPos(x, y);
+      const pos = grid.toPos(x, y);
       const point = grid.data.get(pos);
       const unit = units.get(pos);
 
@@ -181,8 +151,8 @@ export const findPaths = (
   path.push(cur);
   while (curParents) {
     curParents.sort((a, b) => {
-      const coordA = fromPos(a);
-      const coordB = fromPos(b);
+      const coordA = Grid.fromPos(a);
+      const coordB = Grid.fromPos(b);
 
       return readOrderSort(coordA, coordB);
     });
@@ -246,8 +216,8 @@ export const bfs = (
 export const getUnitsForRound = (units: Map<string, Unit>): Array<Unit> => {
   const existing: Array<[string, Unit]> = Array.from(units.entries());
   existing.sort((a, b) => {
-    const coordA = fromPos(a[0]);
-    const coordB = fromPos(b[0]);
+    const coordA = Grid.fromPos(a[0]);
+    const coordB = Grid.fromPos(b[0]);
 
     return readOrderSort(coordA, coordB);
   });
@@ -277,14 +247,14 @@ export const findTargets = (
 
 export const findOpenSpaces = (
   targets: Array<Unit>,
-  grid: Grid,
+  grid: Grid<string>,
   units: Map<string, Unit>
 ): Array<string> => {
   const spaces = [];
 
   for (const target of targets) {
     for (const direction of directions) {
-      const pos = toPos(target.x + direction[0], target.y + direction[1]);
+      const pos = Grid.toPos(target.x + direction[0], target.y + direction[1]);
       const value = grid.data.get(pos);
       const unit = units.get(pos);
       if (!unit && value && value === ".") {
@@ -327,8 +297,8 @@ export const findMove = (
       return 1;
     }
 
-    const coordA = fromPos(a[1]);
-    const coordB = fromPos(b[1]);
+    const coordA = Grid.fromPos(a[1]);
+    const coordB = Grid.fromPos(b[1]);
 
     return readOrderSort(coordA, coordB);
   });
@@ -342,7 +312,7 @@ export const moveUnit = (
   units: Map<string, Unit>
 ): void => {
   units.delete(unit.pos());
-  const coord = fromPos(pos);
+  const coord = Grid.fromPos(pos);
   unit.x = coord[0];
   unit.y = coord[1];
   units.set(unit.pos(), unit);
@@ -360,7 +330,7 @@ export const findAdjecentTarget = (
   const candidates: Array<Unit> = [];
 
   for (const dir of directions) {
-    const pos = toPos(unit.x + dir[0], unit.y + dir[1]);
+    const pos = Grid.toPos(unit.x + dir[0], unit.y + dir[1]);
     const candidate = units.get(pos);
     if (candidate && candidate.race !== unit.race) {
       candidates.push(candidate);
@@ -411,7 +381,7 @@ class Outcome {
 }
 
 export const runCombat = (
-  grid: Grid,
+  grid: Grid<string>,
   graph: Map<string, Array<string>>,
   units: Map<string, Unit>,
   shouldPrint = false
@@ -433,6 +403,7 @@ export const runCombat = (
     */
     for (const unit of getUnitsForRound(units)) {
       if (unit.hp < 0) {
+        // eslint-disable-next-line no-continue
         continue;
       }
 
@@ -512,7 +483,7 @@ export const runCombat = (
 
 const solve1 = (file: string): number => {
   const lines = parse(file);
-  const grid = parseGrid(lines);
+  const grid = Grid.parseGrid(lines);
   const units = extractUnits(grid);
   const graph = parseGraph(grid);
 
@@ -521,7 +492,7 @@ const solve1 = (file: string): number => {
 
 const solve2 = (file: string): number => {
   const lines = parse(file);
-  let grid = parseGrid(lines);
+  let grid = Grid.parseGrid(lines);
   let units = extractUnits(grid);
 
   const graph = parseGraph(grid);
@@ -551,9 +522,10 @@ const solve2 = (file: string): number => {
       done = true;
     }
 
-    grid = parseGrid(lines);
+    grid = Grid.parseGrid(lines);
     units = extractUnits(grid);
 
+    // eslint-disable-next-line no-loop-func
     units.forEach((unit, _) => {
       if (unit.race === Race.E) {
         unit.ap += apBoost;
