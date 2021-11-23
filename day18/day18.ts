@@ -74,7 +74,7 @@ const run = (
   console.log(`After ${minutes} minutes:`);
   console.log(grid.print());
 
-  return new Grid(grid.data, initial.maxX, initial.maxY);
+  return new Grid(grid.data, 0, initial.maxX, 0, initial.maxY);
 };
 
 const solve1 = (file: string): number => {

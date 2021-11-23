@@ -3,7 +3,11 @@
 class Grid<T> {
   data: Map<string, T>;
 
+  minX: number;
+
   maxX: number;
+
+  minY: number;
 
   maxY: number;
 
@@ -27,9 +31,17 @@ class Grid<T> {
     [-1, 1], // top left
   ];
 
-  constructor(data: Map<string, T>, maxX: number, maxY: number) {
+  constructor(
+    data: Map<string, T>,
+    minX: number,
+    maxX: number,
+    minY: number,
+    maxY: number
+  ) {
     this.data = data;
+    this.minX = minX;
     this.maxX = maxX;
+    this.minY = minY;
     this.maxY = maxY;
   }
 
@@ -51,7 +63,7 @@ class Grid<T> {
       }
     }
 
-    return new Grid(data, maxX, maxY);
+    return new Grid(data, 0, maxX, 0, maxY);
   };
 
   static toPos = (x: number, y: number): string => {
@@ -71,13 +83,13 @@ class Grid<T> {
     return Grid.fromPos(pos);
   };
 
-  print = (): string[] => {
+  print = (defaultalue?: string): string[] => {
     const out = [];
-    for (let y = 0; y < this.maxY + 1; y++) {
+    for (let y = this.minY; y < this.maxY + 1; y++) {
       const line = [];
-      for (let x = 0; x < this.maxX + 1; x++) {
+      for (let x = this.minX; x < this.maxX + 1; x++) {
         const pos = Grid.toPos(x, y);
-        const point = this.data.get(pos);
+        const point = this.data.get(pos) || defaultalue;
 
         if (point) {
           line.push(point);
