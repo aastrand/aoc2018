@@ -1,6 +1,7 @@
 import "jest";
+import { bfs, parseGraph } from "../graph";
+import { Grid } from "../grid";
 import {
-  bfs,
   extractUnits,
   findAdjecentTarget,
   findMove,
@@ -10,8 +11,6 @@ import {
   findTargets,
   getUnitsForRound,
   moveUnit,
-  parseGraph,
-  parseGrid,
   print,
   Race,
   runCombat,
@@ -53,7 +52,7 @@ const pathsExample = `
 
 describe("Grid", () => {
   it("should parse grid", async () => {
-    const grid = parseGrid(movement.trim().split("\n"));
+    const grid = Grid.parseGrid(movement.trim().split("\n"));
 
     expect(grid.maxX).toBe(8);
     expect(grid.maxY).toBe(8);
@@ -65,7 +64,7 @@ describe("Grid", () => {
   });
 
   it("should extract units", async () => {
-    const grid = parseGrid(movement.trim().split("\n"));
+    const grid = Grid.parseGrid(movement.trim().split("\n"));
     const units = extractUnits(grid);
 
     expect(Array.from(units.values()).length).toBe(9);
@@ -80,7 +79,7 @@ describe("Grid", () => {
   });
 
   it("should parse graph", async () => {
-    const grid = parseGrid(movement.trim().split("\n"));
+    const grid = Grid.parseGrid(movement.trim().split("\n"));
     const _ = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -96,7 +95,7 @@ describe("Grid", () => {
   });
 
   it("should findShortestPath", async () => {
-    const grid = parseGrid(pathsExample.trim().split("\n"));
+    const grid = Grid.parseGrid(pathsExample.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -141,7 +140,7 @@ const exampleAdjecent = `
 
 describe("Solve", () => {
   it("should print", async () => {
-    const grid = parseGrid(movement.trim().split("\n"));
+    const grid = Grid.parseGrid(movement.trim().split("\n"));
     const units = extractUnits(grid);
 
     const lines = print(grid, units);
@@ -150,7 +149,7 @@ describe("Solve", () => {
   });
 
   it("should getUnitsForRound", async () => {
-    const grid = parseGrid(movement.trim().split("\n"));
+    const grid = Grid.parseGrid(movement.trim().split("\n"));
     const units = extractUnits(grid);
 
     const unitForRound = getUnitsForRound(units);
@@ -163,7 +162,7 @@ describe("Solve", () => {
   });
 
   it("should findTargets", async () => {
-    const grid = parseGrid(example.trim().split("\n"));
+    const grid = Grid.parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
 
     const targetLists = [];
@@ -191,7 +190,7 @@ describe("Solve", () => {
   });
 
   it("should findOpenSpaces", async () => {
-    const grid = parseGrid(example.trim().split("\n"));
+    const grid = Grid.parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
 
     const targetLists = [];
@@ -210,17 +209,17 @@ describe("Solve", () => {
   });
 
   it("should findPaths", async () => {
-    const grid = parseGrid(example.trim().split("\n"));
+    const grid = Grid.parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
-    const parents = bfs("1,1", graph, units);
+    const parents = bfs("1,1", graph, (n) => units.get(n) === undefined);
 
     const path = findPaths("3,2", parents);
     expect(path).toEqual(["1,1", "2,1", "3,1", "3,2"]);
   });
 
   it("should findMove", async () => {
-    const grid = parseGrid(example.trim().split("\n"));
+    const grid = Grid.parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
     const targetLists = [];
@@ -235,7 +234,7 @@ describe("Solve", () => {
   });
 
   it("should findMove", async () => {
-    const grid = parseGrid(exampleMultipleShortest.trim().split("\n"));
+    const grid = Grid.parseGrid(exampleMultipleShortest.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
     const targetLists = [];
@@ -250,7 +249,7 @@ describe("Solve", () => {
   });
 
   it("should moveUnit", async () => {
-    const grid = parseGrid(example.trim().split("\n"));
+    const grid = Grid.parseGrid(example.trim().split("\n"));
     const units = extractUnits(grid);
 
     moveUnit(units.get("1,1"), "2,1", units);
@@ -262,7 +261,7 @@ describe("Solve", () => {
   });
 
   it("should findAdjecentTarget", async () => {
-    const grid = parseGrid(exampleAdjecent.trim().split("\n"));
+    const grid = Grid.parseGrid(exampleAdjecent.trim().split("\n"));
     const units = extractUnits(grid);
     units.get("4,2").hp = 100;
     units.get("3,3").hp = 90;
@@ -339,7 +338,7 @@ const example6 = `
 
 describe("Combat", () => {
   it("should runCombat(example1)", async () => {
-    const grid = parseGrid(example1.trim().split("\n"));
+    const grid = Grid.parseGrid(example1.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -348,7 +347,7 @@ describe("Combat", () => {
   });
 
   it("should runCombat(example2)", async () => {
-    const grid = parseGrid(example2.trim().split("\n"));
+    const grid = Grid.parseGrid(example2.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -357,7 +356,7 @@ describe("Combat", () => {
   });
 
   it("should runCombat(example3)", async () => {
-    const grid = parseGrid(example3.trim().split("\n"));
+    const grid = Grid.parseGrid(example3.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -366,7 +365,7 @@ describe("Combat", () => {
   });
 
   it("should runCombat(example4)", async () => {
-    const grid = parseGrid(example4.trim().split("\n"));
+    const grid = Grid.parseGrid(example4.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -375,7 +374,7 @@ describe("Combat", () => {
   });
 
   it("should runCombat(example5)", async () => {
-    const grid = parseGrid(example5.trim().split("\n"));
+    const grid = Grid.parseGrid(example5.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
@@ -384,7 +383,7 @@ describe("Combat", () => {
   });
 
   it("should runCombat(example6)", async () => {
-    const grid = parseGrid(example6.trim().split("\n"));
+    const grid = Grid.parseGrid(example6.trim().split("\n"));
     const units = extractUnits(grid);
     const graph = parseGraph(grid);
 
