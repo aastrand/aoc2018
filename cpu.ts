@@ -94,6 +94,33 @@ class CPU {
     "mulr", // 14
     "gtrr", // 15
   ];
+
+  run = (
+    mem: Array<string[]>,
+    debug?: boolean,
+    inspect?: Set<number>
+  ): void => {
+    while (this.ip < mem.length) {
+      if (inspect && inspect.has(this.ip)) {
+        console.log(`${this.ip}: ${this.regs}`);
+      }
+      const instr = mem[this.ip];
+      this.regs[this.ipBind] = this.ip;
+
+      if (debug) {
+        console.log(`regs before: ${this.regs}`);
+        console.log(`${this.ip} executing: ${instr}`);
+      }
+
+      this[instr[0]](+instr[1], +instr[2], +instr[3]);
+
+      if (debug) {
+        console.log(`regs after: ${this.regs}`);
+      }
+      this.ip = this.regs[this.ipBind];
+      this.ip++;
+    }
+  };
 }
 
 export { CPU };
