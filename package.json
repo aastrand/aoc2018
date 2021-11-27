@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "eslint-config-airbnb": "^19.0.0",
-    "ts-linked-list": "^1.0.6"
+    "ts-linked-list": "^1.0.6",
+    "ts-priority-queue": "^0.1.1"
   }
 }

@@ -1,3 +1,4 @@
+import PriorityQueue from "ts-priority-queue";
 import { Grid } from "./grid";
 
 const parseGraph = (
@@ -85,4 +86,74 @@ const bfs = (
   return parent;
 };
 
-export { bfs, parseGraph };
+interface Edge {
+  to: string;
+  cost: number;
+}
+
+const dijkstra = (
+  graph: Map<string, Array<Edge>>,
+  startNode: string,
+  finishNode?: string
+) => {
+  const parents: Record<string, string> = Object.create(null);
+  const costs: Record<string, number> = Object.create(null);
+  const explored: Record<string, boolean> = Object.create(null);
+  const prioQueue = new PriorityQueue<Edge>({
+    comparator: (a: Edge, b: Edge) => a.cost - b.cost,
+  });
+  prioQueue.queue({ to: startNode, cost: 0 });
+
+  do {
+    const node = prioQueue.dequeue().to;
+    const cost = costs[node] || 0;
+
+    explored[node] = true;
+
+    if (undefined !== finishNode && node === finishNode) break;
+
+    const edges = graph.get(node) || [];
+    for (let i = 0; i < edges.length; i++) {
+      const childNode = edges[i].to;
+      const alt = cost + edges[i].cost;
+
+      if (undefined === costs[childNode] || alt < costs[childNode]) {
+        costs[childNode] = alt;
+        parents[childNode] = node;
+
+        if (!explored[childNode]) {
+          prioQueue.queue({ to: childNode, cost: alt });
+        }
+      }
+    }
+  } while (prioQueue.length !== 0);
+
+  return {
+    costs,
+    parents,
+  };
+};
+
+const findShortestPathWeighted = (
+  graph: Map<string, Array<Edge>>,
+  startNode: string,
+  finishNode: string
+) => {
+  const { costs, parents } = dijkstra(graph, startNode, finishNode);
+
+  const optimalPath = [finishNode];
+  let parent = parents[finishNode];
+  while (parent !== startNode) {
+    optimalPath.push(parent);
+    parent = parents[parent];
+  }
+  optimalPath.reverse();
+
+  const results = {
+    distance: costs[finishNode],
+    path: optimalPath,
+  };
+
+  return results;
+};
+export { bfs, Edge, findShortestPathWeighted, parseGraph };
