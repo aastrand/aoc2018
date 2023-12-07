@@ -169,6 +169,6 @@ assert(solve("./example.txt").max === 10);
 assert(solve("./example2.txt").max === 18);
 assert(solve("./example3.txt").max === 23);
 assert(solve("./example4.txt").max === 31);
-const solution = solve("./input.txt");
+const solution = solve("../input/2018/day20.txt");
 console.log(solution.max);
 console.log(solution.count);

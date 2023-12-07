@@ -201,7 +201,7 @@ const solve2 = (
 };
 
 assert(solve1("./example.txt") === "CABDFE");
-console.log(solve1("./input.txt"));
+console.log(solve1("../input/2018/day7.txt"));
 
 assert(solve2("./example.txt", 0, 2) === 15);
-console.log(solve2("./input.txt", 60, 5));
+console.log(solve2("../input/2018/day7.txt", 60, 5));

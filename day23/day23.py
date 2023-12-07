@@ -7,11 +7,10 @@ from z3 import If, Int, Optimize
 
 
 def get_lines(filename):
-    return [l.strip() for l in open(filename, 'r')]
+    return [l.strip() for l in open(filename, "r")]
 
 
 class Bot:
-
     x = 0
     y = 0
     z = 0
@@ -40,7 +39,7 @@ def manhattan(a, b):
     return sum
 
 
-BOT_RE = '^pos=<([0-9-]+),([0-9-]+),([0-9-]+)>, r=([0-9]+)$'
+BOT_RE = "^pos=<([0-9-]+),([0-9-]+),([0-9-]+)>, r=([0-9]+)$"
 
 
 def get_bots(lines):
@@ -74,19 +73,25 @@ def zabs(x):
 def part2(filename):
     bots = get_bots(get_lines(filename))
 
-    (x, y, z) = (Int('x'), Int('y'), Int('z'))
-    in_ranges = [Int('in_range_' + str(i)) for i in range(len(bots))]
-    range_count = Int('sum')
+    (x, y, z) = (Int("x"), Int("y"), Int("z"))
+    in_ranges = [Int("in_range_" + str(i)) for i in range(len(bots))]
+    range_count = Int("sum")
 
     o = Optimize()
 
     for i in range(len(bots)):
-        o.add(in_ranges[i] == If(zabs(x - bots[i].x) +
-                                 zabs(y - bots[i].y) +
-                                 zabs(z - bots[i].z) <= bots[i].r, 1, 0))
+        o.add(
+            in_ranges[i]
+            == If(
+                zabs(x - bots[i].x) + zabs(y - bots[i].y) + zabs(z - bots[i].z)
+                <= bots[i].r,
+                1,
+                0,
+            )
+        )
     o.add(range_count == sum(in_ranges))
 
-    dist_from_zero = Int('dist')
+    dist_from_zero = Int("dist")
     o.add(dist_from_zero == zabs(x) + zabs(y) + zabs(z))
 
     h1 = o.maximize(range_count)
@@ -99,11 +104,11 @@ def part2(filename):
 
 def main():
     assert part1("example.txt") == 7
-    print(part1("input.txt"))
+    print(part1("../input/2018/day23.txt"))
 
     assert part2("example2.txt") == 36
-    print(part2("input.txt"))
+    print(part2("../input/2018/day23.txt"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

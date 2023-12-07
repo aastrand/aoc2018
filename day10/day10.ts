@@ -97,4 +97,4 @@ const solve1 = (file: string): void => {
 };
 
 solve1("./example.txt");
-solve1("./input.txt");
+solve1("../input/2018/day10.txt");

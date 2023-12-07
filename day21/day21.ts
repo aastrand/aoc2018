@@ -53,5 +53,5 @@ const solve2 = (file: string): number => {
   return run(cpu, mem);
 };
 
-console.log(solve1("./input.txt"));
-console.log(solve2("./input.txt"));
+console.log(solve1("../input/2018/day21.txt"));
+console.log(solve2("../input/2018/day21.txt"));

@@ -4,7 +4,7 @@ import sys
 
 
 def get_lines(filename):
-    return [l.strip() for l in open(filename, 'r')]
+    return [l.strip() for l in open(filename, "r")]
 
 
 def part1(filename):
@@ -21,11 +21,11 @@ def part2(filename):
 
 def main():
     assert part1("example.txt") == 0
-    print(part1("input.txt"))
+    print(part1("../input/2018/day1.txt"))
 
     assert part2("example.txt") == 0
-    print(part2("input.txt"))
+    print(part2("../input/2018/day1.txt"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

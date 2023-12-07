@@ -175,7 +175,7 @@ const testFindClosest = () => {
 testFindClosest();
 
 assert(solve1("./example.txt") === 17);
-console.log(solve1("./input.txt"));
+console.log(solve1("../input/2018/day6.txt"));
 
 assert(solve2("./example.txt", 32) === 16);
-console.log(solve2("./input.txt", 10000));
+console.log(solve2("../input/2018/day6.txt", 10000));

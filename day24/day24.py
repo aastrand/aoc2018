@@ -45,16 +45,19 @@ class Group:
         return dmg
 
     def __str__(self):
-        return "%s %s: units: %s, hp: %s, weaknesses: %s, immunities: %s, ap: %s, attack_type: %s, initiative: %s" % (
-            self.army,
-            self.id,
-            self.units,
-            self.hp,
-            self.weaknesses,
-            self.immunities,
-            self.ap,
-            self.attack_type,
-            self.initiative,
+        return (
+            "%s %s: units: %s, hp: %s, weaknesses: %s, immunities: %s, ap: %s, attack_type: %s, initiative: %s"
+            % (
+                self.army,
+                self.id,
+                self.units,
+                self.hp,
+                self.weaknesses,
+                self.immunities,
+                self.ap,
+                self.attack_type,
+                self.initiative,
+            )
         )
 
     def __repr__(self):
@@ -217,10 +220,10 @@ def part2(filename, start):
 
 def main():
     assert part1("example.txt") == 5216
-    print(part1("input.txt"))
+    print(part1("../input/2018/day24.txt"))
 
     assert part2("example.txt", 1570) == 51
-    print(part2("input.txt", 1))
+    print(part2("../input/2018/day24.txt", 1))
 
 
 if __name__ == "__main__":

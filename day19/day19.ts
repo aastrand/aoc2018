@@ -34,6 +34,6 @@ const solve2 = (file: string): string => {
 };
 
 assert(solve1("./example.txt") === 6);
-console.log(solve1("./input.txt"));
+console.log(solve1("../input/2018/day19.txt"));
 
-console.log(solve2("./input.txt"));
+console.log(solve2("../input/2018/day19.txt"));

@@ -81,7 +81,7 @@ fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
 }
 
 fn main() {
-    println!("{}", solve1("input.txt"));
+    println!("{}", solve1("../input/2018/day25.txt"));
 }
 
 #[cfg(test)]
